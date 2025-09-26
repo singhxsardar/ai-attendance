@@ -66,7 +66,6 @@ Best regards, Academic AI Assistant`;
     setIsLoading(true);
     
     const message = generateAIReport(student);
-    const notificationId = `${student.id}-${Date.now()}`;
     
     const newNotification: NotificationData = {
       studentId: student.id,
@@ -79,9 +78,29 @@ Best regards, Academic AI Assistant`;
 
     setNotifications(prev => [...prev, newNotification]);
 
-    // Simulate API call to send SMS/WhatsApp
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Call your Flask API endpoint
+      const response = await fetch('/api/send-notification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          student_id: student.id,
+          student_name: student.name,
+          parent_name: student.parentName,
+          parent_contact: student.parentContact,
+          parent_whatsapp: student.parentWhatsApp,
+          message: message,
+          notification_type: type
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
       
       setNotifications(prev => 
         prev.map(notif => 
@@ -93,9 +112,12 @@ Best regards, Academic AI Assistant`;
 
       toast({
         title: "Report Sent Successfully! ✅",
-        description: `AI-generated performance report sent to ${student.parentName} via ${type}`,
+        description: `Performance report sent to ${student.parentName} via ${type} using Brevo API`,
       });
+
     } catch (error) {
+      console.error('Failed to send notification:', error);
+      
       setNotifications(prev => 
         prev.map(notif => 
           notif.studentId === student.id && notif.status === 'pending'
@@ -106,7 +128,7 @@ Best regards, Academic AI Assistant`;
 
       toast({
         title: "Failed to Send Report ❌",
-        description: "Please try again later",
+        description: "Please check your Flask backend connection",
         variant: "destructive",
       });
     } finally {
@@ -117,15 +139,44 @@ Best regards, Academic AI Assistant`;
   const sendBulkReports = async () => {
     setIsLoading(true);
     
-    for (const student of students) {
-      await sendNotification(student, 'both');
-      await new Promise(resolve => setTimeout(resolve, 500)); // Stagger requests
+    try {
+      // Call Flask bulk send endpoint
+      const response = await fetch('/api/send-bulk-notifications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          students: students.map(student => ({
+            student_id: student.id,
+            student_name: student.name,
+            parent_name: student.parentName,
+            parent_contact: student.parentContact,
+            parent_whatsapp: student.parentWhatsApp,
+            message: generateAIReport(student)
+          }))
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      toast({
+        title: "Bulk Reports Sent! 🚀",
+        description: `Performance reports sent to all ${students.length} parents via Brevo`,
+      });
+      
+    } catch (error) {
+      console.error('Failed to send bulk notifications:', error);
+      toast({
+        title: "Bulk Send Failed ❌", 
+        description: "Please check your Flask backend connection",
+        variant: "destructive",
+      });
     }
-    
-    toast({
-      title: "Bulk Reports Sent! 🚀",
-      description: `Performance reports sent to all ${students.length} parents`,
-    });
     
     setIsLoading(false);
   };
