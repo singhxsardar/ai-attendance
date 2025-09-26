@@ -209,5 +209,46 @@ export const mockStudents: Student[] = [
       strengths: ['Creativity', 'Art skills', 'Social interaction'],
       improvements: ['Study habits', 'Attendance', 'Mathematical skills', 'Focus improvement']
     }
+  },
+  {
+    id: '6',
+    name: 'Sagar Singh',
+    class: 'BCA',
+    rollNumber: '94',
+    parentContact: '7814507901',
+    parentWhatsApp: '7814507901',
+    parentName: 'Rajinder Singh',
+    subjects: [
+      { name: 'Mathematics', totalMarks: 100, obtainedMarks: 85, grade: 'B+', performance: 'good' },
+      { name: 'Physics', totalMarks: 100, obtainedMarks: 82, grade: 'B+', performance: 'good' },
+      { name: 'Chemistry', totalMarks: 100, obtainedMarks: 87, grade: 'A', performance: 'excellent' },
+      { name: 'English', totalMarks: 100, obtainedMarks: 80, grade: 'B', performance: 'good' },
+      { name: 'Hindi', totalMarks: 100, obtainedMarks: 84, grade: 'B+', performance: 'good' }
+    ],
+    attendance: {
+      totalDays: 120,
+      presentDays: 110,
+      absentDays: 10,
+      percentage: 91.7,
+      status: 'good'
+    },
+    overallPerformance: {
+      overallGrade: 'B+',
+      percentage: 83.6,
+      rank: 4,
+      totalStudents: 46,
+      aiInsights: [
+        'Consistent performance across all subjects',
+        'Good attendance showing dedication',
+        'Strong academic foundation in BCA program'
+      ],
+      recommendations: [
+        'Continue maintaining steady performance',
+        'Focus on practical programming skills',
+        'Consider advanced computer science topics'
+      ],
+      strengths: ['Consistent effort', 'Good understanding', 'Regular attendance'],
+      improvements: ['Advanced mathematics', 'Technical writing']
+    }
   }
 ];
